@@ -133,6 +133,21 @@ cdef class AfcFile(Base):
     cpdef truncate(self, uint64_t newsize):
         self.handle_error(afc_file_truncate(self._client._c_client, self._c_handle, newsize))
 
+
+    cpdef read(self, uint32_t length):
+        cdef:
+            uint32_t bytes_read
+            char* c_data = <char *>malloc(length * sizeof(char))
+        try:
+            self.handle_error(afc_file_read(self._client._c_client, self._c_handle, c_data, length, &bytes_read))
+            data = c_data[:bytes_read]
+        except BaseError, e:
+           raise
+        finally:
+           free(c_data)
+        
+        return data
+
     cpdef uint32_t write(self, bytes data):
         cdef:
             uint32_t bytes_written

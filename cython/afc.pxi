@@ -195,6 +195,7 @@ cdef class AfcClient(BaseService):
             bytes f
             int i = 0
             list result = []
+        dir_list = NULL
         err = afc_read_directory(self._c_client, directory, &dir_list)
         try:
             self.handle_error(err)
